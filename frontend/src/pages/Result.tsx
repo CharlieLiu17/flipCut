@@ -9,8 +9,8 @@ export function Result() {
 
   return (
     <>
-      <Link to="/" className="back-link">← Back</Link>
-      <ResultPanel jobId={jobId} onDeleted={() => navigate("/")} />
+      <Link to="/" className="back-link">← <span>Back</span></Link>
+      <ResultPanel jobId={jobId} onDeleted={() => navigate("/?deleted=1")} />
     </>
   );
 }

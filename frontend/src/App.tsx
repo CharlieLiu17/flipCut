@@ -15,13 +15,14 @@ export function App() {
         </nav>
         <div className="app-wrap">
           <header className="header">
-            <div className="wordmark">Flip<em>Cut</em></div>
+            <div className="wordmark">Flip<span className="wordmark-cut">Cut</span></div>
             <div className="tagline">Mirror. Remove background. Share. Done.</div>
           </header>
           <Routes>
             <Route path="/" element={<Upload />} />
             <Route path="/job/:jobId" element={<Result />} />
           </Routes>
+          <footer className="footer">Made with 💜 by Charlie Liu</footer>
         </div>
       </JobCacheProvider>
     </HashRouter>

@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { getJob, deleteJob } from "../api";
 import { ProgressBar } from "./ProgressBar";
 import { ConfirmModal } from "./ConfirmModal";
+import { ErrorBanner, type ErrorType } from "./ErrorBanner";
 import { POLL_INTERVAL_MS, MAX_POLLS, STATUS_LABELS } from "../constants";
 import { HiOutlineDownload, HiOutlineClipboardCopy, HiOutlineTrash, HiOutlineShare } from "react-icons/hi";
 import { useJobCache } from "../JobCacheContext";
@@ -18,7 +19,7 @@ export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
   const cached = cache.get(jobId);
   const [status, setStatus] = useState(cached?.status ?? "uploaded");
   const [imageUrl, setImageUrl] = useState(cached?.url ?? "");
-  const [error, setError] = useState("");
+  const [error, setError] = useState<{ type: ErrorType; message: string } | null>(null);
   const [copied, setCopied] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [showShare, setShowShare] = useState(false);
@@ -33,7 +34,7 @@ export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
 
       if (pollCount.current > MAX_POLLS) {
         clearInterval(interval);
-        setError("Processing timed out. Please try again.");
+        setError({ type: "timeout", message: "Processing timed out. Please try again." });
         return;
       }
 
@@ -61,7 +62,7 @@ export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
       removeRecentJob(jobId);
       onDeleted?.();
     } catch {
-      setError("Delete failed. Please try again.");
+      setError({ type: "delete", message: "Delete failed. Please try again." });
     }
   }
 
@@ -93,10 +94,11 @@ export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
   const label = STATUS_LABELS[status] ?? status;
 
   const filename = getRecentJobs().find((j) => j.jobId === jobId)?.filename;
+  const originalThumb = getRecentJobs().find((j) => j.jobId === jobId)?.thumbnail;
 
   return (
     <>
-      {error && <div className="error-banner visible">{error}</div>}
+      {error && <ErrorBanner type={error.type} message={error.message} onDismiss={() => setError(null)} />}
 
       {showConfirm && (
         <ConfirmModal
@@ -111,11 +113,14 @@ export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
         <div className={`result-image-wrap${status === "done" ? " checkered" : ""}`}>
           {status !== "done" && (
             <div className="result-loading">
-              <div className="result-loading-label">{label}</div>
-              <ProgressBar status={status} />
+              {originalThumb && <img className="result-img result-img-blur" src={originalThumb} alt="Processing preview" />}
+              <div className="result-loading-overlay">
+                <div className="result-loading-label">{label}</div>
+                <ProgressBar status={status} />
+              </div>
             </div>
           )}
-          {status === "done" && <img className="result-img" src={imageUrl} alt="Processed result" onLoad={() => {
+          {status === "done" && <img className="result-img result-img-reveal" src={imageUrl} alt="Processed result" onLoad={() => {
             const img = new Image();
             img.crossOrigin = "anonymous";
             img.onload = () => {
@@ -132,27 +137,27 @@ export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
         </div>
         <div className="result-footer">
           <button className="btn-share" onClick={() => { setShowShare(true); setLinkCopied(false); }} disabled={status !== "done"}>
-            <HiOutlineShare /> Share
+            <HiOutlineShare /> <span>Share</span>
           </button>
           <button className="btn-download" onClick={handleDownload} disabled={status !== "done"}>
-            <HiOutlineDownload /> Download
+            <HiOutlineDownload /> <span>Download</span>
           </button>
           <button className="btn-copy" onClick={handleCopy} disabled={status !== "done"}>
-            <HiOutlineClipboardCopy /> {copied ? "Copied!" : "Copy Image"}
+            <HiOutlineClipboardCopy /> <span>{copied ? "Copied!" : "Copy Image"}</span>
           </button>
           <button className="btn-delete" onClick={() => setShowConfirm(true)}>
-            <HiOutlineTrash /> Delete
+            <HiOutlineTrash /> <span>Delete</span>
           </button>
         </div>
       </div>
 
       {showShare && (
-        <div className="modal-overlay" onClick={() => setShowShare(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <button className="modal-x" onClick={() => setShowShare(false)}>×</button>
+        <div className="modal-overlay" onClick={() => setShowShare(false)} role="presentation">
+          <div className="modal" role="dialog" aria-modal="true" aria-label="Share link" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => { if (e.key === "Escape") setShowShare(false); }}>
+            <button className="modal-x" onClick={() => setShowShare(false)} aria-label="Close">×</button>
             <div className="modal-title">Share link</div>
             <div className="share-field">
-              <input className="share-input" readOnly value={imageUrl} />
+              <input className="share-input" readOnly value={imageUrl} aria-label="Image URL" autoFocus />
               <button className="share-copy-btn" onClick={async () => {
                 await navigator.clipboard.writeText(imageUrl);
                 setLinkCopied(true);

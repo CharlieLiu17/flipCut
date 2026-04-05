@@ -9,23 +9,23 @@
 - [x] Download button on result page — fetch + blob for cross-origin
 - [x] Copy image to clipboard (with URL fallback)
 - [x] In-memory job cache — navigating back to a completed job shows result instantly without re-polling
-- [ ] Local storage cache of recent jobs — store `{ jobId, status, createdAt }` array, show on home page as "Recent" list
+- [x] Local storage cache of recent jobs — store `{ jobId, status, createdAt }` array, show on home page as "Recent" list
 - [x] Clickable wordmark in header → links back to home (`/`)
 
 ## Frontend — UI Polish
-- [ ] Add a brief "How it works" section below the upload zone (3 steps: upload → we remove bg & flip → download)
-- [ ] Footer with branding / attribution
-- [ ] Favicon
-- [ ] Better error states — distinct UI for upload failure vs processing timeout vs network error
-- [ ] Loading skeleton on result page before first poll returns
-- [ ] Success animation/transition when image appears (fade in)
-- [ ] Mobile responsive pass — test on small screens
-- [ ] Accessibility: focus states, aria labels on buttons, alt text
+- [x] Add a brief "How it works" section below the upload zone (3 steps: upload → we remove bg & flip → download)
+- [x] Footer with branding / attribution
+- [x] Favicon
+- [x] Better error states — distinct UI for upload failure vs processing timeout vs network error
+- [x] Loading skeleton on result page before first poll returns
+- [x] Success animation/transition when image appears (fade in)
+- [x] Mobile responsive pass — test on small screens
+- [x] Accessibility: focus states, aria labels on buttons, alt text
 
 ## UX Nice-to-Haves
-- [ ] Drag-and-drop visual feedback — show image preview in the drop zone before confirming
-- [ ] "Process another" button on the result page
-- [ ] Toast notifications instead of inline error banners
+- [x] Drag-and-drop visual feedback — show image preview in the drop zone before confirming
+- [x] "Process another" button on the result page
+- [x] Toast notifications instead of inline error banners
 - [ ] Show original vs processed side-by-side comparison
 - [ ] Progress bar instead of just status text (map statuses to percentage)
 - [ ] Copy share link (the `/#/job/{jobId}` URL, not just the image URL)
