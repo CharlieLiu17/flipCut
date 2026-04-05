@@ -16,6 +16,8 @@ body {
 
 .header { text-align: center; margin-bottom: 2.5rem; }
 
+.header-link { text-decoration: none; color: inherit; }
+
 .wordmark {
   font-family: 'DM Serif Display', serif;
   font-size: 42px;
@@ -187,7 +189,7 @@ body {
   border-radius: 8px;
 }
 
-.btn-copy, .btn-delete {
+.btn-copy, .btn-delete, .btn-download {
   padding: 7px 14px;
   font-family: 'DM Sans', sans-serif;
   font-size: 13px;
@@ -196,12 +198,16 @@ body {
   cursor: pointer;
   transition: opacity 0.15s;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 .btn-copy { background: #1a1a1a; color: #fff; border: none; }
+.btn-download { background: #1a1a1a; color: #fff; border: none; }
 .btn-delete { background: none; border: 0.5px solid #ccc; color: #d32f2f; }
-.btn-copy:hover, .btn-delete:hover { opacity: 0.75; }
-.btn-copy:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-copy:hover, .btn-delete:hover, .btn-download:hover { opacity: 0.75; }
+.btn-copy:disabled, .btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .error-banner {
   padding: 10px 14px;
@@ -257,3 +263,135 @@ body {
 
 .btn-cancel:hover { background: #f5f5f5; }
 .btn-confirm-delete:hover { opacity: 0.85; }
+
+.recent-jobs {
+  margin-top: 2rem;
+  border-top: 0.5px solid #eee;
+  padding-top: 1.5rem;
+}
+
+.recent-jobs-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  margin-bottom: 10px;
+  letter-spacing: 0.03em;
+}
+
+.recent-job {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  transition: background 0.15s;
+}
+
+.recent-job:hover { background: #f5f5f5; }
+
+.recent-job-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+  min-width: 0;
+}
+
+.btn-clear-recent, .btn-delete-recent {
+  background: none; border: none; cursor: pointer;
+  color: #ccc; font-size: 16px; line-height: 1;
+  padding: 4px; flex-shrink: 0;
+  transition: color 0.15s;
+  display: flex; align-items: center;
+}
+
+.btn-clear-recent:hover { color: #999; }
+.btn-delete-recent:hover { color: #d32f2f; }
+
+.recent-job-thumb {
+  height: 20px;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.recent-job-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.recent-job-id { font-family: monospace; color: #1a1a1a; }
+
+.recent-job-date { color: #999; font-size: 12px; }
+
+.how-it-works {
+  margin-top: 1.5rem;
+  border-top: 0.5px solid #eee;
+  padding-top: 1.5rem;
+}
+
+.how-it-works-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+
+.how-it-works-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.how-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #1a1a1a;
+}
+
+.how-step-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  border: 0.5px solid #eee;
+  font-size: 12px;
+  font-weight: 500;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: #666;
+}
+
+.how-note {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.6;
+}
+
+.value-card {
+  margin-top: 2rem;
+  border-top: 0.5px solid #eee;
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.value-headline {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.value-body {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto;
+}

@@ -4,19 +4,24 @@ import { getJob, deleteJob } from "../api";
 import { Spinner } from "../components/Spinner";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { POLL_INTERVAL_MS, MAX_POLLS, STATUS_LABELS } from "../constants";
+import { HiOutlineDownload, HiOutlineClipboardCopy, HiOutlineTrash } from "react-icons/hi";
+import { useJobCache } from "../JobCacheContext";
+import { removeRecentJob } from "../recentJobs";
 
 export function Result() {
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
-  const [status, setStatus] = useState("uploaded");
-  const [imageUrl, setImageUrl] = useState("");
+  const cache = useJobCache();
+  const cached = jobId ? cache.get(jobId) : undefined;
+  const [status, setStatus] = useState(cached?.status ?? "uploaded");
+  const [imageUrl, setImageUrl] = useState(cached?.url ?? "");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const pollCount = useRef(0);
 
   useEffect(() => {
-    if (!jobId) return;
+    if (!jobId || status === "done") return;
     const interval = setInterval(async () => {
       pollCount.current++;
 
@@ -29,6 +34,7 @@ export function Result() {
       try {
         const data = await getJob(jobId);
         setStatus(data.status);
+        cache.set(jobId, data);
         if (data.status === "done" && data.url) {
           clearInterval(interval);
           setImageUrl(data.url);
@@ -46,17 +52,36 @@ export function Result() {
     setShowConfirm(false);
     try {
       await deleteJob(jobId);
+      removeRecentJob(jobId);
       navigate("/");
     } catch {
       setError("Delete failed. Please try again.");
     }
   }
 
-  function handleCopy() {
-    navigator.clipboard.writeText(imageUrl).then(() => {
+  async function handleDownload() {
+    if (!imageUrl) return;
+    const res = await fetch(imageUrl);
+    const blob = await res.blob();
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `flipcut-${jobId}.png`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  async function handleCopy() {
+    if (!imageUrl) return;
+    try {
+      const data = await fetch(imageUrl);
+      const blob = await data.blob();
+      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
       setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    });
+    } catch {
+      await navigator.clipboard.writeText(imageUrl);
+      setCopied(true);
+    }
+    setTimeout(() => setCopied(false), 1500);
   }
 
   const label = STATUS_LABELS[status] ?? status;
@@ -80,10 +105,15 @@ export function Result() {
         </div>
         <div className="result-footer">
           <div className="result-url">{status === "done" ? imageUrl : label}</div>
-          <button className="btn-copy" onClick={handleCopy} disabled={status !== "done"}>
-            {copied ? "Copied!" : "Copy URL"}
+          <button className="btn-download" onClick={handleDownload} disabled={status !== "done"}>
+            <HiOutlineDownload /> Download
           </button>
-          <button className="btn-delete" onClick={() => setShowConfirm(true)}>Delete</button>
+          <button className="btn-copy" onClick={handleCopy} disabled={status !== "done"}>
+            <HiOutlineClipboardCopy /> {copied ? "Copied!" : "Copy Image"}
+          </button>
+          <button className="btn-delete" onClick={() => setShowConfirm(true)}>
+            <HiOutlineTrash /> Delete
+          </button>
         </div>
       </div>
     </>

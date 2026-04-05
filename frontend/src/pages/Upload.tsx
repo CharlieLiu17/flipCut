@@ -1,6 +1,9 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from "react";
-import { useNavigate } from "react-router-dom";
-import { uploadImage } from "../api";
+import { useNavigate, Link } from "react-router-dom";
+import { uploadImage, deleteJob } from "../api";
+import { addRecentJob, getRecentJobs, removeRecentJob, createThumbnail } from "../recentJobs";
+import { HiOutlineTrash } from "react-icons/hi";
+import { ConfirmModal } from "../components/ConfirmModal";
 
 function formatBytes(b: number) {
   if (b < 1024) return b + " B";
@@ -16,6 +19,22 @@ export function Upload() {
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
+  const [recentJobs, setRecentJobs] = useState(getRecentJobs);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  function removeRecent(jobId: string) {
+    removeRecentJob(jobId);
+    setRecentJobs(getRecentJobs());
+  }
+
+  async function deleteRecent(jobId: string) {
+    setConfirmDeleteId(null);
+    try {
+      await deleteJob(jobId);
+    } catch { /* ignore if already deleted */ }
+    removeRecentJob(jobId);
+    setRecentJobs(getRecentJobs());
+  }
 
   function onFile(f: File) {
     setFile(f);
@@ -47,6 +66,8 @@ export function Upload() {
     setError("");
     try {
       const { jobId } = await uploadImage(file);
+      const thumbnail = thumb ? await createThumbnail(thumb) : undefined;
+      addRecentJob(jobId, thumbnail);
       navigate(`/job/${jobId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
@@ -57,6 +78,14 @@ export function Upload() {
   return (
     <>
       {error && <div className="error-banner visible">{error}</div>}
+
+      {confirmDeleteId && (
+        <ConfirmModal
+          message="Are you sure? This will permanently delete the image from our servers."
+          onConfirm={() => deleteRecent(confirmDeleteId)}
+          onCancel={() => setConfirmDeleteId(null)}
+        />
+      )}
 
       {!file ? (
         <div
@@ -95,6 +124,52 @@ export function Upload() {
           </button>
         </>
       )}
+      {recentJobs.length > 0 && (
+        <div className="recent-jobs">
+          <div className="recent-jobs-title">Recent</div>
+          {recentJobs.map((job) => (
+            <div key={job.jobId} className="recent-job">
+              <Link to={`/job/${job.jobId}`} className="recent-job-link">
+                {job.thumbnail && <img className="recent-job-thumb" src={job.thumbnail} alt="" />}
+                <div className="recent-job-info">
+                  <span className="recent-job-id">{job.jobId.slice(0, 8)}…</span>
+                  <span className="recent-job-date">{new Date(job.createdAt).toLocaleDateString()}</span>
+                </div>
+              </Link>
+              <button className="btn-delete-recent" onClick={() => setConfirmDeleteId(job.jobId)} title="Delete from server"><HiOutlineTrash /></button>
+              <button className="btn-clear-recent" onClick={() => removeRecent(job.jobId)} title="Remove from history">×</button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="value-card">
+        <p className="value-headline">Great photos shouldn't need Photoshop.</p>
+        <p className="value-body">
+          Drop your image — we'll remove the background, flip it right, and hand it back in seconds. Ready for your listing, your socials, or your portfolio.
+        </p>
+      </div>
+
+      <div className="how-it-works">
+        <div className="how-it-works-title">How it works</div>
+        <div className="how-it-works-steps">
+          <div className="how-step">
+            <span className="how-step-num">1</span>
+            <span>Upload a product photo</span>
+          </div>
+          <div className="how-step">
+            <span className="how-step-num">2</span>
+            <span>We remove the background and flip the image</span>
+          </div>
+          <div className="how-step">
+            <span className="how-step-num">3</span>
+            <span>Download, copy, or share — done in seconds</span>
+          </div>
+        </div>
+        <p className="how-note">
+          Accepts PNG, JPG, and WebP up to 10 MB. Output is always a transparent PNG — perfect for e-commerce listings, social media, and print.
+        </p>
+      </div>
     </>
   );
 }

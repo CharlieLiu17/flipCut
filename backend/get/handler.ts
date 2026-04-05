@@ -7,7 +7,7 @@ const db = new DynamoDBClient({ region: process.env.AWS_REGION ?? "us-east-2" })
 const s3 = new S3Client({ region: process.env.AWS_REGION ?? "us-east-2" });
 const TABLE = process.env.TABLE_NAME ?? "flipcut-jobs";
 const BUCKET = "flipcut-images";
-const URL_EXPIRY = 300;
+const URL_EXPIRY = 3600;
 
 function cors() {
   return {
