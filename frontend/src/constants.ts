@@ -1,6 +1,14 @@
 export const API_BASE = "https://api.flipcut.org";
+export const APP_BASE = "https://flipcut.org";
 export const POLL_INTERVAL_MS = 2000;
 export const MAX_POLLS = 30;
+export const MAX_FILES = 10;
+export const MAX_FILE_SIZE = 10 * 1024 * 1024;
+export const ACCEPTED_TYPES = ["image/png", "image/jpeg", "image/webp"];
+export const ACCEPTED_TYPES_STR = "image/png,image/jpeg,image/webp";
+export const SUCCESS_BANNER_MS = 10000;
+export const PROGRESS_HOLD_MS = 600;
+export const COPIED_FEEDBACK_MS = 2000;
 
 export const STATUS_LABELS: Record<string, string> = {
   uploaded: "Loading…",

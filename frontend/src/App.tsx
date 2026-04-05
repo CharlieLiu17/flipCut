@@ -15,7 +15,7 @@ export function App() {
         </nav>
         <div className="app-wrap">
           <header className="header">
-            <div className="wordmark">Flip<span className="wordmark-cut">Cut</span></div>
+            <Link to="/" className="wordmark-link"><div className="wordmark">Flip<span className="wordmark-cut">Cut</span></div></Link>
             <div className="tagline">Mirror. Remove background. Share. Done.</div>
           </header>
           <Routes>

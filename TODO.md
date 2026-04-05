@@ -26,12 +26,10 @@
 - [x] Drag-and-drop visual feedback — show image preview in the drop zone before confirming
 - [x] "Process another" button on the result page
 - [x] Toast notifications instead of inline error banners
-- [ ] Show original vs processed side-by-side comparison
-- [ ] Progress bar instead of just status text (map statuses to percentage)
-- [ ] Copy share link (the `/#/job/{jobId}` URL, not just the image URL)
-- [ ] Time elapsed counter while processing ("12s elapsed…")
+- [x] Show original vs processed side-by-side comparison
+- [x] Progress bar instead of just status text (map statuses to percentage)
+- [x] Copy share link (the `/#/job/{jobId}` URL, not just the image URL)
 
 ## Deploy
-- [ ] Build frontend (`npm run build`)
-- [ ] Upload `dist/` contents to S3 frontend bucket
-- [ ] Invalidate CloudFront cache
+- [x] Build frontend (`npm run build`)
+- [x] Upload `dist/` contents to S3 frontend bucket

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { uploadImage, deleteJob } from "../api";
 import { addRecentJob, getRecentJobs, removeRecentJob, createThumbnail } from "../recentJobs";
 import { HiOutlineTrash } from "react-icons/hi";
+import { MAX_FILES, MAX_FILE_SIZE, ACCEPTED_TYPES, ACCEPTED_TYPES_STR, SUCCESS_BANNER_MS } from "../constants";
 import { BeforeAfterSlider } from "../components/BeforeAfterSlider";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { JobRow } from "../components/JobRow";
@@ -10,8 +11,6 @@ import { ResultPanel } from "../components/ResultPanel";
 import { ErrorBanner, type ErrorType } from "../components/ErrorBanner";
 import beforeImg from "../assets/before.jpg";
 import afterImg from "../assets/after.png";
-
-const MAX_FILES = 10;
 
 function timeAgo(iso: string) {
   const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -45,7 +44,7 @@ export function Upload() {
   useEffect(() => {
     if (searchParams.get("deleted")) {
       setSuccessMsgs((prev) => [...prev, "✓ Image deleted successfully!"]);
-      setTimeout(() => setSuccessMsgs((prev) => prev.slice(1)), 10000);
+      setTimeout(() => setSuccessMsgs((prev) => prev.slice(1)), SUCCESS_BANNER_MS);
       setSearchParams({}, { replace: true });
       setRecentJobs(getRecentJobs());
     }
@@ -53,7 +52,7 @@ export function Upload() {
 
   function addSuccess(msg: string) {
     setSuccessMsgs((prev) => [...prev, msg]);
-    setTimeout(() => setSuccessMsgs((prev) => prev.slice(1)), 10000);
+    setTimeout(() => setSuccessMsgs((prev) => prev.slice(1)), SUCCESS_BANNER_MS);
   }
 
   async function deleteRecent(jobId: string) {
@@ -87,7 +86,7 @@ export function Upload() {
 
   async function processFiles(files: File[]) {
     const valid = files.filter((f) =>
-      ["image/png", "image/jpeg", "image/webp"].includes(f.type) && f.size <= 10 * 1024 * 1024
+      ACCEPTED_TYPES.includes(f.type) && f.size <= MAX_FILE_SIZE
     );
     if (valid.length === 0) { setError({ type: "validation", message: "No valid images selected (PNG/JPG/WebP, max 10 MB)" }); return; }
     if (valid.length > MAX_FILES) { setError({ type: "validation", message: `Max ${MAX_FILES} files at a time` }); return; }
@@ -214,7 +213,7 @@ export function Upload() {
           onClick={() => inputRef.current?.click()}
           onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); inputRef.current?.click(); } }}
         >
-          <input ref={inputRef} type="file" accept="image/png,image/jpeg,image/webp" multiple onChange={onChange} style={{ display: "none" }} />
+          <input ref={inputRef} type="file" accept={ACCEPTED_TYPES_STR} multiple onChange={onChange} style={{ display: "none" }} />
           <div className="upload-icon">
             <svg viewBox="0 0 24 24" fill="none" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

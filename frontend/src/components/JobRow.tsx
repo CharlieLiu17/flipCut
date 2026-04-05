@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { getJob } from "../api";
 import { useJobCache } from "../JobCacheContext";
 import { updateRecentJobThumbnail } from "../recentJobs";
-import { POLL_INTERVAL_MS, MAX_POLLS, STATUS_LABELS } from "../constants";
+import { POLL_INTERVAL_MS, MAX_POLLS, STATUS_LABELS, PROGRESS_HOLD_MS } from "../constants";
 import { ProgressBar } from "./ProgressBar";
 
 interface Props {
@@ -49,7 +49,7 @@ export function JobRow({ jobId, filename, thumbnail, onDone }: Props) {
           };
           img.src = data.url;
           onDone(jobId);
-          setTimeout(() => setShowBar(false), 600);
+          setTimeout(() => setShowBar(false), PROGRESS_HOLD_MS);
         }
       } catch { /* keep polling */ }
     }, POLL_INTERVAL_MS);

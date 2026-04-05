@@ -703,3 +703,5 @@ body {
     padding: 8px;
   }
 }
+
+.wordmark-link { text-decoration: none; color: inherit; }

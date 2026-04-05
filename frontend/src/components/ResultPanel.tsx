@@ -3,7 +3,7 @@ import { getJob, deleteJob } from "../api";
 import { ProgressBar } from "./ProgressBar";
 import { ConfirmModal } from "./ConfirmModal";
 import { ErrorBanner, type ErrorType } from "./ErrorBanner";
-import { POLL_INTERVAL_MS, MAX_POLLS, STATUS_LABELS } from "../constants";
+import { POLL_INTERVAL_MS, MAX_POLLS, STATUS_LABELS, APP_BASE, COPIED_FEEDBACK_MS } from "../constants";
 import { HiOutlineDownload, HiOutlineClipboardCopy, HiOutlineTrash, HiOutlineShare } from "react-icons/hi";
 import { useJobCache } from "../JobCacheContext";
 import { removeRecentJob, updateRecentJobThumbnail, getRecentJobs } from "../recentJobs";
@@ -88,13 +88,14 @@ export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
       await navigator.clipboard.writeText(imageUrl);
       setCopied(true);
     }
-    setTimeout(() => setCopied(false), 1500);
+    setTimeout(() => setCopied(false), COPIED_FEEDBACK_MS);
   }
 
   const label = STATUS_LABELS[status] ?? status;
 
   const filename = getRecentJobs().find((j) => j.jobId === jobId)?.filename;
   const originalThumb = getRecentJobs().find((j) => j.jobId === jobId)?.thumbnail;
+  const shareUrl = `${APP_BASE}/#/job/${jobId}`;
 
   return (
     <>
@@ -157,11 +158,11 @@ export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
             <button className="modal-x" onClick={() => setShowShare(false)} aria-label="Close">×</button>
             <div className="modal-title">Share link</div>
             <div className="share-field">
-              <input className="share-input" readOnly value={imageUrl} aria-label="Image URL" autoFocus />
+              <input className="share-input" readOnly value={shareUrl} aria-label="Share URL" autoFocus />
               <button className="share-copy-btn" onClick={async () => {
-                await navigator.clipboard.writeText(imageUrl);
+                await navigator.clipboard.writeText(shareUrl);
                 setLinkCopied(true);
-                setTimeout(() => setLinkCopied(false), 2000);
+                setTimeout(() => setLinkCopied(false), COPIED_FEEDBACK_MS);
               }}>{linkCopied ? "Copied!" : "Copy"}</button>
             </div>
           </div>
