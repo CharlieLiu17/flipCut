@@ -2,7 +2,7 @@ import { API_BASE } from "./constants";
 
 export async function uploadImage(file: File): Promise<{ jobId: string }> {
   const base64 = await fileToBase64(file);
-  const res = await fetch(`${API_BASE}/upload`, {
+  const res = await fetch(`${API_BASE}/images`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ image: base64, mimeType: file.type, filename: file.name }),
@@ -12,13 +12,13 @@ export async function uploadImage(file: File): Promise<{ jobId: string }> {
 }
 
 export async function getJob(jobId: string): Promise<{ status: string; url?: string }> {
-  const res = await fetch(`${API_BASE}/retrieve?jobId=${jobId}`);
+  const res = await fetch(`${API_BASE}/images?jobId=${jobId}`);
   if (!res.ok) throw new Error("Failed to fetch status");
   return res.json();
 }
 
 export async function deleteJob(jobId: string): Promise<void> {
-  const res = await fetch(`${API_BASE}/image?jobId=${jobId}`, { method: "DELETE" });
+  const res = await fetch(`${API_BASE}/images?jobId=${jobId}`, { method: "DELETE" });
   if (!res.ok) throw new Error("Delete failed");
 }
 

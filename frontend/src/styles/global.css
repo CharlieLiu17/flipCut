@@ -212,3 +212,48 @@ body {
   color: #d32f2f;
   margin-bottom: 1rem;
 }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+}
+
+.modal-message { font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+.btn-cancel {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 0.5px solid #ccc;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-confirm-delete {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background: #d32f2f;
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-cancel:hover { background: #f5f5f5; }
+.btn-confirm-delete:hover { opacity: 0.85; }

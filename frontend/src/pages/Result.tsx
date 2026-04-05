@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getJob, deleteJob } from "../api";
 import { Spinner } from "../components/Spinner";
+import { ConfirmModal } from "../components/ConfirmModal";
 import { POLL_INTERVAL_MS, MAX_POLLS, STATUS_LABELS } from "../constants";
 
 export function Result() {
@@ -11,6 +12,7 @@ export function Result() {
   const [imageUrl, setImageUrl] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const pollCount = useRef(0);
 
   useEffect(() => {
@@ -41,6 +43,7 @@ export function Result() {
 
   async function handleDelete() {
     if (!jobId) return;
+    setShowConfirm(false);
     try {
       await deleteJob(jobId);
       navigate("/");
@@ -62,6 +65,14 @@ export function Result() {
     <>
       {error && <div className="error-banner visible">{error}</div>}
 
+      {showConfirm && (
+        <ConfirmModal
+          message="Are you sure? This will permanently delete the image from our servers."
+          onConfirm={handleDelete}
+          onCancel={() => setShowConfirm(false)}
+        />
+      )}
+
       <div className="result-panel visible">
         <div className="result-image-wrap checkered">
           {status !== "done" && <Spinner label={label} />}
@@ -72,7 +83,7 @@ export function Result() {
           <button className="btn-copy" onClick={handleCopy} disabled={status !== "done"}>
             {copied ? "Copied!" : "Copy URL"}
           </button>
-          <button className="btn-delete" onClick={handleDelete}>Delete</button>
+          <button className="btn-delete" onClick={() => setShowConfirm(true)}>Delete</button>
         </div>
       </div>
     </>
