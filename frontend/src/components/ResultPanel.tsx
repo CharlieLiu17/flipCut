@@ -1,18 +1,19 @@
 import { useEffect, useState, useRef } from "react";
 import { getJob, deleteJob } from "../api";
-import { Spinner } from "./Spinner";
+import { ProgressBar } from "./ProgressBar";
 import { ConfirmModal } from "./ConfirmModal";
 import { POLL_INTERVAL_MS, MAX_POLLS, STATUS_LABELS } from "../constants";
-import { HiOutlineDownload, HiOutlineClipboardCopy, HiOutlineTrash } from "react-icons/hi";
+import { HiOutlineDownload, HiOutlineClipboardCopy, HiOutlineTrash, HiOutlineShare } from "react-icons/hi";
 import { useJobCache } from "../JobCacheContext";
-import { removeRecentJob, updateRecentJobThumbnail } from "../recentJobs";
+import { removeRecentJob, updateRecentJobThumbnail, getRecentJobs } from "../recentJobs";
 
 interface Props {
   jobId: string;
   onDeleted?: () => void;
+  onDone?: () => void;
 }
 
-export function ResultPanel({ jobId, onDeleted }: Props) {
+export function ResultPanel({ jobId, onDeleted, onDone }: Props) {
   const cache = useJobCache();
   const cached = cache.get(jobId);
   const [status, setStatus] = useState(cached?.status ?? "uploaded");
@@ -20,6 +21,8 @@ export function ResultPanel({ jobId, onDeleted }: Props) {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showShare, setShowShare] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const pollCount = useRef(0);
 
   useEffect(() => {
@@ -41,6 +44,7 @@ export function ResultPanel({ jobId, onDeleted }: Props) {
         if (data.status === "done" && data.url) {
           clearInterval(interval);
           setImageUrl(data.url);
+          onDone?.();
         }
       } catch {
         /* keep polling */
@@ -88,34 +92,48 @@ export function ResultPanel({ jobId, onDeleted }: Props) {
 
   const label = STATUS_LABELS[status] ?? status;
 
+  const filename = getRecentJobs().find((j) => j.jobId === jobId)?.filename;
+
   return (
     <>
       {error && <div className="error-banner visible">{error}</div>}
 
       {showConfirm && (
         <ConfirmModal
-          message="Are you sure? This will permanently delete the image from our servers."
+          message="Are you sure? This will permanently delete the image."
           onConfirm={handleDelete}
           onCancel={() => setShowConfirm(false)}
         />
       )}
 
       <div className="result-panel visible">
-        <div className="result-image-wrap checkered">
-          {status !== "done" && <Spinner label={label} />}
-          {status === "done" && <img className="result-img" src={imageUrl} alt="Processed result" crossOrigin="anonymous" onLoad={(e) => {
-            const img = e.currentTarget;
-            const h = 80;
-            const w = Math.round((img.naturalWidth / img.naturalHeight) * h);
-            const canvas = document.createElement("canvas");
-            canvas.width = w;
-            canvas.height = h;
-            canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
-            updateRecentJobThumbnail(jobId, canvas.toDataURL("image/png"));
+        {filename && <div className="result-filename">{filename}</div>}
+        <div className={`result-image-wrap${status === "done" ? " checkered" : ""}`}>
+          {status !== "done" && (
+            <div className="result-loading">
+              <div className="result-loading-label">{label}</div>
+              <ProgressBar status={status} />
+            </div>
+          )}
+          {status === "done" && <img className="result-img" src={imageUrl} alt="Processed result" onLoad={() => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+              const h = 80;
+              const w = Math.round((img.naturalWidth / img.naturalHeight) * h);
+              const canvas = document.createElement("canvas");
+              canvas.width = w;
+              canvas.height = h;
+              canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
+              updateRecentJobThumbnail(jobId, canvas.toDataURL("image/png"));
+            };
+            img.src = imageUrl;
           }} />}
         </div>
         <div className="result-footer">
-          <div className="result-url">{status === "done" ? imageUrl : label}</div>
+          <button className="btn-share" onClick={() => { setShowShare(true); setLinkCopied(false); }} disabled={status !== "done"}>
+            <HiOutlineShare /> Share
+          </button>
           <button className="btn-download" onClick={handleDownload} disabled={status !== "done"}>
             <HiOutlineDownload /> Download
           </button>
@@ -127,6 +145,23 @@ export function ResultPanel({ jobId, onDeleted }: Props) {
           </button>
         </div>
       </div>
+
+      {showShare && (
+        <div className="modal-overlay" onClick={() => setShowShare(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-x" onClick={() => setShowShare(false)}>×</button>
+            <div className="modal-title">Share link</div>
+            <div className="share-field">
+              <input className="share-input" readOnly value={imageUrl} />
+              <button className="share-copy-btn" onClick={async () => {
+                await navigator.clipboard.writeText(imageUrl);
+                setLinkCopied(true);
+                setTimeout(() => setLinkCopied(false), 2000);
+              }}>{linkCopied ? "Copied!" : "Copy"}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

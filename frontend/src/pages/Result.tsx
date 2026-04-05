@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { ResultPanel } from "../components/ResultPanel";
 
 export function Result() {
@@ -7,5 +7,10 @@ export function Result() {
 
   if (!jobId) return null;
 
-  return <ResultPanel jobId={jobId} onDeleted={() => navigate("/")} />;
+  return (
+    <>
+      <Link to="/" className="back-link">← Back</Link>
+      <ResultPanel jobId={jobId} onDeleted={() => navigate("/")} />
+    </>
+  );
 }

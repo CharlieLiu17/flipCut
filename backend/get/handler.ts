@@ -1,13 +1,10 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
-import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const db = new DynamoDBClient({ region: process.env.AWS_REGION ?? "us-east-2" });
-const s3 = new S3Client({ region: process.env.AWS_REGION ?? "us-east-2" });
 const TABLE = process.env.TABLE_NAME ?? "flipcut-jobs";
 const BUCKET = "flipcut-images";
-const URL_EXPIRY = 3600;
+const REGION = process.env.AWS_REGION ?? "us-east-2";
 
 function cors() {
   return {
@@ -35,9 +32,7 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
   const response: Record<string, unknown> = { jobId, status };
 
   if (status === "done") {
-    response.url = await getSignedUrl(s3, new GetObjectCommand({
-      Bucket: BUCKET, Key: `processed/${jobId}.png`,
-    }), { expiresIn: URL_EXPIRY });
+    response.url = `https://${BUCKET}.s3.${REGION}.amazonaws.com/processed/${jobId}.png`;
   }
 
   return res(200, response);
