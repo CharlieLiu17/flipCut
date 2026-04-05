@@ -1,10 +1,10 @@
 const STORAGE_KEY = "flipcut-recent-jobs";
-const MAX_JOBS = 20;
 
 export interface RecentJob {
   jobId: string;
   createdAt: string;
   thumbnail?: string;
+  filename?: string;
 }
 
 export function getRecentJobs(): RecentJob[] {
@@ -15,10 +15,19 @@ export function getRecentJobs(): RecentJob[] {
   }
 }
 
-export function addRecentJob(jobId: string, thumbnail?: string): void {
+export function addRecentJob(jobId: string, thumbnail?: string, filename?: string): void {
   const jobs = getRecentJobs().filter((j) => j.jobId !== jobId);
-  jobs.unshift({ jobId, createdAt: new Date().toISOString(), thumbnail });
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs.slice(0, MAX_JOBS)));
+  jobs.unshift({ jobId, createdAt: new Date().toISOString(), thumbnail, filename });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs));
+}
+
+export function updateRecentJobThumbnail(jobId: string, thumbnail: string): void {
+  const jobs = getRecentJobs();
+  const job = jobs.find((j) => j.jobId === jobId);
+  if (job) {
+    job.thumbnail = thumbnail;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(jobs));
+  }
 }
 
 export function removeRecentJob(jobId: string): void {
@@ -36,7 +45,7 @@ export function createThumbnail(dataUrl: string): Promise<string> {
       canvas.width = w;
       canvas.height = h;
       canvas.getContext("2d")!.drawImage(img, 0, 0, w, h);
-      resolve(canvas.toDataURL("image/jpeg", 0.6));
+      resolve(canvas.toDataURL("image/png"));
     };
     img.src = dataUrl;
   });

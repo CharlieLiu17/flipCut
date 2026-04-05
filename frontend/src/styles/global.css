@@ -285,7 +285,7 @@ body {
 }
 
 .recent-jobs-title {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 500;
   color: #999;
   margin-bottom: 10px;
@@ -295,9 +295,9 @@ body {
 .recent-job {
   display: flex;
   align-items: center;
-  padding: 8px 12px;
+  padding: 14px 12px;
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   transition: background 0.15s;
 }
 
@@ -306,7 +306,7 @@ body {
 .recent-job-link {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   flex: 1;
   text-decoration: none;
   color: inherit;
@@ -315,7 +315,7 @@ body {
 
 .btn-clear-recent, .btn-delete-recent {
   background: none; border: none; cursor: pointer;
-  color: #ccc; font-size: 16px; line-height: 1;
+  color: #ccc; font-size: 24px; line-height: 1;
   padding: 4px; flex-shrink: 0;
   transition: color 0.15s;
   display: flex; align-items: center;
@@ -325,10 +325,11 @@ body {
 .btn-delete-recent:hover { color: #d32f2f; }
 
 .recent-job-thumb {
-  height: 20px;
-  border-radius: 4px;
-  object-fit: cover;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: contain;
   flex-shrink: 0;
+  border: 0.5px solid #ddd;
 }
 
 .recent-job-info {
@@ -337,9 +338,9 @@ body {
   justify-content: center;
 }
 
-.recent-job-id { font-family: monospace; color: #1a1a1a; }
+.recent-job-id { font-family: monospace; color: #1a1a1a; font-size: 14px; }
 
-.recent-job-date { color: #999; font-size: 12px; }
+.recent-job-date { color: #999; font-size: 13px; }
 
 .how-it-works {
   margin-top: 1.5rem;
@@ -348,7 +349,7 @@ body {
 }
 
 .how-it-works-title {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 500;
   color: #999;
   margin-bottom: 12px;
@@ -416,7 +417,7 @@ body {
 }
 
 .ba-title {
-  font-size: 13px;
+  font-size: 18px;
   font-weight: 500;
   color: #999;
   margin-bottom: 12px;
