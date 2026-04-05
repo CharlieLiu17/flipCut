@@ -8,47 +8,61 @@ body {
   background: #fff;
 }
 
+.navbar {
+  padding: 12px 20px;
+  border-bottom: 0.5px solid #eee;
+}
+
+.navbar-link { display: inline-block; }
+
+.navbar-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  object-fit: contain;
+  display: block;
+}
+
 .app-wrap {
-  padding: 2rem 1rem;
+  padding: 3.5rem 1rem 2rem;
   max-width: 680px;
   margin: 0 auto;
 }
 
 .header { text-align: center; margin-bottom: 2.5rem; }
 
-.header-link { text-decoration: none; color: inherit; }
-
 .wordmark {
-  font-family: 'DM Serif Display', serif;
-  font-size: 42px;
-  letter-spacing: -1px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: 1px;
   line-height: 1;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
 }
 
-.wordmark em { font-style: italic; color: #666; }
+.wordmark em { font-style: normal; color: #028fcd; }
 
 .tagline {
-  font-size: 14px;
+  font-size: 16px;
   color: #666;
   font-weight: 300;
   letter-spacing: 0.04em;
 }
 
 .upload-zone {
-  border: 1px dashed #ccc;
+  border: 1px dashed rgba(2, 143, 205, 0.3);
   border-radius: 12px;
   padding: 3rem 2rem;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
-  background: #fafafa;
+  background: rgba(2, 143, 205, 0.04);
   margin-bottom: 1.5rem;
 }
 
 .upload-zone:hover, .upload-zone.drag-over {
-  border-color: #999;
-  background: #f5f5f5;
+  border-color: rgba(2, 143, 205, 0.5);
+  background: rgba(2, 143, 205, 0.08);
 }
 
 .upload-icon {
@@ -378,13 +392,14 @@ body {
   margin-top: 2rem;
   border-top: 0.5px solid #eee;
   padding-top: 1.5rem;
-  text-align: center;
+  text-align: left;
 }
 
 .value-headline {
-  font-family: 'DM Serif Display', serif;
-  font-size: 20px;
-  color: #1a1a1a;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #028fcd;
   margin-bottom: 8px;
 }
 
@@ -392,6 +407,29 @@ body {
   font-size: 14px;
   color: #666;
   line-height: 1.6;
-  max-width: 480px;
-  margin: 0 auto;
+}
+
+.ba-section {
+  margin-top: 2rem;
+  border-top: 0.5px solid #eee;
+  padding-top: 1.5rem;
+}
+
+.ba-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #999;
+  margin-bottom: 12px;
+  letter-spacing: 0.03em;
+}
+
+.ba-slider {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ba-slider img {
+  width: 100%;
+  display: block;
 }

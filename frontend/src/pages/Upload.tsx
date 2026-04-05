@@ -3,7 +3,10 @@ import { useNavigate, Link } from "react-router-dom";
 import { uploadImage, deleteJob } from "../api";
 import { addRecentJob, getRecentJobs, removeRecentJob, createThumbnail } from "../recentJobs";
 import { HiOutlineTrash } from "react-icons/hi";
+import { BeforeAfterSlider } from "../components/BeforeAfterSlider";
 import { ConfirmModal } from "../components/ConfirmModal";
+import beforeImg from "../assets/before.jpg";
+import afterImg from "../assets/after.png";
 
 function formatBytes(b: number) {
   if (b < 1024) return b + " B";
@@ -170,6 +173,11 @@ export function Upload() {
           Accepts PNG, JPG, and WebP up to 10 MB. Output is always a transparent PNG — perfect for e-commerce listings, social media, and print.
         </p>
       </div>
+
+      <BeforeAfterSlider
+        before={beforeImg}
+        after={afterImg}
+      />
     </>
   );
 }
