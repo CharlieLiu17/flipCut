@@ -1,9 +1,15 @@
 import { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from "aws-lambda";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb";
 import { randomUUID } from "crypto";
 
-const s3 = new S3Client({ region: process.env.AWS_REGION ?? "us-east-1" });
+const s3 = new S3Client({ region: process.env.AWS_REGION ?? "us-east-2" });
+const lambda = new LambdaClient({ region: process.env.AWS_REGION ?? "us-east-2" });
+const db = new DynamoDBClient({ region: process.env.AWS_REGION ?? "us-east-2" });
 const BUCKET = "flipcut-images";
+const TABLE = process.env.TABLE_NAME ?? "flipcut-jobs";
+const MUTATE_FUNCTION = process.env.MUTATE_FUNCTION_NAME ?? "flipCutMutateProcessor";
 const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MAX_SIZE = 10 * 1024 * 1024;
 
@@ -51,6 +57,22 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     return res(500, { error: "Failed to store image" });
   }
 
-  console.log(`Uploaded ${jobId} (${buffer.length} bytes) to ${key}`);
-  return res(201, { jobId, status: "processing", inputKey: key });
+  await db.send(new PutItemCommand({
+    TableName: TABLE,
+    Item: {
+      jobId: { S: jobId },
+      status: { S: "uploaded" },
+      inputKey: { S: key },
+      createdAt: { S: new Date().toISOString() },
+    },
+  }));
+
+  await lambda.send(new InvokeCommand({
+    FunctionName: MUTATE_FUNCTION,
+    InvocationType: "Event",
+    Payload: Buffer.from(JSON.stringify({ jobId })),
+  }));
+
+  console.log(`Uploaded ${jobId} to ${key}, invoked mutate`);
+  return res(201, { jobId, status: "uploaded", inputKey: key });
 };

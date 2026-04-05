@@ -1,16 +1,15 @@
 {
-  "name": "flipcut-upload",
+  "name": "flipcut-get",
   "version": "1.0.0",
-  "description": "FlipCut image upload Lambda",
   "main": "dist/handler.js",
   "scripts": {
     "build": "tsc",
     "package": "npm run build && cd dist && zip -r ../function.zip . && cd .. && zip -r function.zip node_modules"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.1024.0",
-    "@aws-sdk/client-lambda": "^3.1024.0",
-    "@aws-sdk/client-s3": "^3.600.0"
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/client-s3": "^3.1024.0",
+    "@aws-sdk/s3-request-presigner": "^3.1024.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.140",
