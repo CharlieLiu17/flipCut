@@ -214,10 +214,10 @@ body {
   border-radius: 8px;
 }
 
-.btn-copy, .btn-delete, .btn-download {
-  padding: 7px 14px;
+.btn-copy, .btn-delete, .btn-download, .btn-share {
+  padding: 8px 16px;
   font-family: 'DM Sans', sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   border-radius: 8px;
   cursor: pointer;
@@ -225,14 +225,15 @@ body {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .btn-copy { background: #1a1a1a; color: #fff; border: none; }
 .btn-download { background: #1a1a1a; color: #fff; border: none; }
+.btn-share { background: #1a1a1a; color: #fff; border: none; }
 .btn-delete { background: none; border: 0.5px solid #ccc; color: #d32f2f; }
-.btn-copy:hover, .btn-delete:hover, .btn-download:hover { opacity: 0.75; }
-.btn-copy:disabled, .btn-download:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-copy:hover, .btn-delete:hover, .btn-download:hover, .btn-share:hover { opacity: 0.75; }
+.btn-copy:disabled, .btn-download:disabled, .btn-share:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .error-banner {
   padding: 10px 14px;
@@ -470,14 +471,6 @@ body {
   line-height: 1;
 }
 
-.btn-share {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 16px; border-radius: 8px;
-  border: 1px solid #1a1a1a; background: #1a1a1a;
-  cursor: pointer; font-size: 14px; color: #fff;
-}
-.btn-share:hover { background: #333; }
-.btn-share:disabled { opacity: 0.4; cursor: default; }
 
 .modal-title {
   font-size: 16px;
@@ -576,7 +569,8 @@ body {
 
 .result-loading-label {
   font-size: 14px;
-  color: #666;
+  color: #1a1a1a;
+  font-weight: 500;
   margin-bottom: 12px;
 }
 
@@ -670,6 +664,8 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 1;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
 }
 
 .result-img-reveal {

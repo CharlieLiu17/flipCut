@@ -33,3 +33,4 @@
 ## Deploy
 - [x] Build frontend (`npm run build`)
 - [x] Upload `dist/` contents to S3 frontend bucket
+- [ ] Invalidate CloudFront cache
